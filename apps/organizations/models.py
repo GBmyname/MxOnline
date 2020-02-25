@@ -26,8 +26,15 @@ class CourseOrg(BaseModel):
     fav_nums = models.IntegerField(default=0, verbose_name='收藏数')
     image = models.ImageField(upload_to='org/%Y/%m', verbose_name=u'logo', max_length=100)
     address = models.CharField(max_length=150, verbose_name='机构地址')
-    students = models.IntegerField(default=0,verbose_name='学习人数')
+    students = models.IntegerField(default=0, verbose_name='学习人数')
     course_nums = models.IntegerField(default=0, verbose_name='课程数')
+    is_auth = models.BooleanField(default=False, verbose_name='是否认证')
+    is_gold = models.BooleanField(default=False, verbose_name='是否是金牌课程')
+
+    # 外键反向取值
+    def courses(self):
+        courses = self.course_set.filter(is_classic=True)[:3]
+        return courses
 
     class Meta:
         verbose_name = '机构'

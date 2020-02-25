@@ -1,7 +1,7 @@
 from django.db import models
 
 from apps.users.models import BaseModel
-from apps.organizations.models import Teacher
+from apps.organizations.models import Teacher,CourseOrg
 
 # 设计表结构重点
 '''
@@ -15,6 +15,7 @@ from apps.organizations.models import Teacher
 
 class Course(BaseModel):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='任课教师')
+    course_org=models.ForeignKey(CourseOrg,on_delete=models.CASCADE,verbose_name='课程所属机构',blank=True,null=True)
     name = models.CharField(verbose_name='课程名', max_length=50)
     desc = models.CharField(verbose_name='课程描述', max_length=300)
     learn_time = models.IntegerField(default=0, verbose_name='学习时长（分钟）')
@@ -26,6 +27,7 @@ class Course(BaseModel):
     tag = models.CharField(default='', verbose_name='课程标签', max_length=10)
     youneed_know = models.CharField(default='', max_length=300, verbose_name='课程须知')
     teacher_tell = models.CharField(default='', max_length=300, verbose_name='老师告诉你')
+    is_classic=models.BooleanField(default=False,verbose_name='是否是经典课程')
 
     detail = models.TextField(verbose_name='课程详情')  # TextField不限制长度
     image = models.ImageField(upload_to='courses/%Y/%m', verbose_name='封面图', max_length=100)

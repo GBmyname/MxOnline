@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles',  #管理静态文件
     'apps.courses.apps.CoursesConfig',
     'apps.users.apps.UsersConfig',
     'apps.operations.apps.OperationsConfig',
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'extra_apps.xadmin.apps.XAdminConfig',
     'DjangoUeditor',
+    'pure_pagination',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',           #将MEDIAL_URL路径变量应用于全部Template
             ],
         },
     },
@@ -124,12 +126,21 @@ USE_TZ = False  # 是否使用UTC时区
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 # 设置默认的静态文件路径
+#app所需静态文件路径 ‘名称’，即存放静态文件的目录叫做‘static’，并用于映射访问路径（浏览器不能采用绝对路径方式访问静态资源）, -->查找方式 app/static/app/xxx
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
-)
+)                          #不属于某一个app，工程通用的静态文件路径(绝对路径，与STATIC_URL命名无关)
 
 
 #配置上传文件路径
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#配置django-pure-pagination模块的分页功能
+PAGINATION_SETTINGS = {
+    'PAGE_RANGE_DISPLAYED': 10,
+    'MARGIN_PAGES_DISPLAYED': 2,
+
+    'SHOW_FIRST_PAGE_WHEN_INVALID': True,
+}

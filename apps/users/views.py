@@ -1,10 +1,15 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.views.generic import View
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 from django.urls import reverse
 
 from apps.users.forms import LoginForm
+
+class LogoutView(View):
+    def get(self,request,*args,**kwargs):
+        logout(request)
+        return HttpResponseRedirect(reverse('index'))
 
 
 class LoginView(View):
