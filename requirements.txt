@@ -1,4 +1,4 @@
-Django==2.0
+Django==2.2.10
 mysqlclient==1.4.6
 Python==3.6.8
 DjangoUeditor==1.8.143
