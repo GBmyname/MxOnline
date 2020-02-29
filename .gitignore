@@ -50,6 +50,3 @@ gen
 将删除 extra_apps/xadmin/templatetags/__pycache__/
 将删除 extra_apps/xadmin/views/__pycache__/
 将删除 venv/
-!/testIgnore.txt
-/test/
-!/test1.txt

@@ -32,9 +32,19 @@ class CourseOrg(BaseModel):
     is_gold = models.BooleanField(default=False, verbose_name='是否是金牌课程')
 
     # 外键反向取值
+    def coursesIsClassic(self):
+        classic_courses = self.course_set.filter(is_classic=True)[:3]
+        return classic_courses
+
+    # 查找机构课程
     def courses(self):
-        courses = self.course_set.filter(is_classic=True)[:3]
+        courses = self.course_set.all()
         return courses
+
+    # 查询机构讲师
+    def teachers(self):
+        teachers = self.teacher_set.all()
+        return teachers
 
     class Meta:
         verbose_name = '机构'
@@ -56,6 +66,9 @@ class Teacher(BaseModel):
     age = models.IntegerField(default=18, verbose_name='年龄')
     image = models.ImageField(upload_to='teacher/%Y/%m', verbose_name='头像', max_length=100)
 
+    def course_num(self):
+        course_num=self.course_set.count()
+        return course_num
     class Meta:
         verbose_name = '教师'
         verbose_name_plural = verbose_name
