@@ -7,6 +7,7 @@ from apps.organizations.models import City, CourseOrg
 from apps.courses.models import Course
 from apps.organizations.forms import AddAskForm
 
+
 class TeachersView(View):
     def get(self, request, org_id, *args, **kwargs):
         active = 'teachers'
@@ -15,6 +16,7 @@ class TeachersView(View):
             'org': org,
             'active': active,
         })
+
 
 class DescView(View):
     def get(self, request, org_id, *args, **kwargs):
@@ -117,5 +119,6 @@ class OrgListView(View):
             'city_id': city_id,
             'org_num': org_num,
             'sort': sort,
-            'hot_list': hot_list
+            'hot_list': hot_list,
+            'nav': 'org',
         })

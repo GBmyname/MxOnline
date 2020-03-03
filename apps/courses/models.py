@@ -36,6 +36,10 @@ class Course(BaseModel):
         verbose_name = '课程信息'
         verbose_name_plural = verbose_name
 
+    def lessons_num(self):
+        count=self.lesson_set.count()
+        return count
+
     def __str__(self):
         return self.name
 
