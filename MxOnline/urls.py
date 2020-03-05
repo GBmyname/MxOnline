@@ -34,6 +34,7 @@ urlpatterns = [
     path('org/', include(('apps.organizations.urls', 'organizations'), namespace='org')),
     # 用户操作相关
     path('op/', include(('apps.operations.urls', 'operations'), namespace='op')),
+
     # 课程相关
     path('courses/', include(('apps.courses.urls', 'courses'), namespace='courses')),
     # 配置上传文件的现实URL

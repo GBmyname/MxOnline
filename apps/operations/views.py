@@ -1,11 +1,45 @@
 from django.views import View
 from django.http import JsonResponse
 
-from apps.operations.models import UserFavorite
-from apps.operations.forms import AddFavForm
+from apps.operations.models import UserFavorite, CourseComments
+from apps.operations.forms import AddFavForm, AddCommentForm
 from apps.courses.models import Course
 from apps.organizations.models import CourseOrg, Teacher
 
+
+class AddCommentView(View):
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return JsonResponse({
+                'status': 'fail',
+                'msg': '用户未登陆'
+            })
+
+        user_comment_form = AddCommentForm(request.POST)
+        if user_comment_form.is_valid():
+            course = user_comment_form.cleaned_data['course']
+            comments = user_comment_form.cleaned_data['comments']
+
+            existed_records = CourseComments.objects.filter(user=request.user,
+                                                            course=course, comments=comments)
+            if not existed_records:
+                user_comment_form.save()
+
+                return JsonResponse({
+                    'status': 'success',
+                })
+            else:
+                return JsonResponse({
+                    'status': 'fail',
+                    'msg': 'Duplicate input'
+                })
+
+
+        else:
+            return JsonResponse({
+                'status': 'fail',
+                'msg': '参数错误'
+            })
 
 
 class AddFavView(View):

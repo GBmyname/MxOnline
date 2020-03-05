@@ -14,7 +14,10 @@ class LogoutView(View):
 
 class LoginView(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'login.html')
+        next=request.GET.get('next','')
+        return render(request, 'login.html',{
+            'next':next
+        })
 
     def post(self, request, *args, **kwargs):
         # 表单验证
@@ -26,6 +29,11 @@ class LoginView(View):
             user = authenticate(username=user_name, password=password)
             if user is not None:
                 login(request, user)  # 配置登陆，session/cookie
+
+                next=request.GET.get('next','')
+                if next:
+                    return HttpResponseRedirect(next)
+
                 return HttpResponseRedirect(reverse('index'))
             else:
                 return render(request,'login.html',{'msg':'用户名或密码错误','login_form': login_form})

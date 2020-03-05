@@ -1,11 +1,47 @@
 from django.shortcuts import render
 from django.views import View
-from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+from pure_pagination import Paginator, PageNotAnInteger
 from django.http import JsonResponse
 
-from apps.organizations.models import City, CourseOrg
+from apps.organizations.models import City, CourseOrg, Teacher
 from apps.courses.models import Course
 from apps.organizations.forms import AddAskForm
+
+
+class TeacherDetailView(View):
+    def get(self, request, teacher_id, *args, **kwargs):
+        teacher = Teacher.objects.get(id=teacher_id)
+
+        render(request, 'teacher-detail.html', {
+            'teacher': teacher,
+        })
+
+
+class TeacherListView(View):
+    def get(self, request, *args, **kwargs):
+        teachers = Teacher.objects.all()
+        sort = request.GET.get('sort', '')
+        if sort == 'hot':
+            teachers = teachers.order_by('-click_nums')
+        rank_teacher = teachers.order_by('-fav_nums')
+
+        # 配置pure_pagination分页功能
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+
+        p = Paginator(teachers, request=request, per_page=2)
+
+        # 需要特别注意，此时org_list已经不再是QuerySet,将数据库信息封装进了xx.object_list，所以在前端需要修改命名格式
+        teachers = p.page(page)
+
+        return render(request, 'teachers-list.html', {
+            'teachers': teachers,
+            'rank_teacher': rank_teacher,
+            'sort': sort
+
+        })
 
 
 class TeachersView(View):

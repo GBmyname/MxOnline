@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    {% load staticfiles %}
     <meta charset="UTF-8">
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
@@ -26,7 +27,9 @@
                     {% if user.is_authenticated %}
                         <div class="personal">
                             <dl class="user fr">
-                                <dd>{%  if user.nick_name %}{{ user.nick_name }}{% else %}{{ user.username }}{% endif %}<img class="down fr" src="/static/images/top_down.png"/></dd>
+                                <dd>{% if user.nick_name %}{{ user.nick_name }}{% else %}
+                                    {{ user.username }}{% endif %}<img class="down fr"
+                                                                       src="/static/images/top_down.png"/></dd>
                                 <dt><img width="20" height="20" src="{{ user.image.url }}"/>
                                 </dt>
                             </dl>
@@ -81,16 +84,18 @@
                 <div class="nav">
                     <div class="wp">
                         <ul>
-                            <li class="active"><a href="index.html">首页</a></li>
-                            <li>
+                            <li class="{% if request.path|slice:'6' == '/index' %}active{% endif %}"><a href="{% url 'index' %}">首页</a>
+                            </li>
+                            <li class="{% if request.path|slice:'8' == '/courses' %}active{% endif %}">
                                 <a href="{% url 'courses:list' %}">
-                                    公开课<img class="hot" src="/static/images/nav_hot.png">
+                                    公开课<img class="hot" src="{% static 'images/nav_hot.png' %}">
                                 </a>
                             </li>
-                            <li>
-                                <a href="teachers-list.html">授课教师</a>
+                            <li class="{% if request.path|slice:'17' == '/org/teacher_list' %}active{% endif %}">
+                                <a href="{% url 'org:teacher_list' %}">授课教师</a>
                             </li>
-                            <li><a href="{% url 'org:list' %}">授课机构</a></li>
+                            <li class="{% if request.path|slice:'9' == '/org/list' %}active{% endif %}"><a
+                                    href="{% url 'org:list' %}">授课机构</a></li>
                         </ul>
                     </div>
                 </div>
