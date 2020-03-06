@@ -50,3 +50,25 @@ gen
 将删除 extra_apps/xadmin/templatetags/__pycache__/
 将删除 extra_apps/xadmin/views/__pycache__/
 将删除 venv/
+!/apps/courses/migrations/
+!/apps/operations/migrations/
+!/apps/organizations/migrations/
+!/apps/users/migrations/
+将删除 apps/courses/__pycache__/urls.cpython-36.pyc
+将删除 apps/courses/__pycache__/views.cpython-36.pyc
+将删除 apps/courses/migrations/__pycache__/0004_auto_20200304_1046.cpython-36.pyc
+将删除 apps/courses/migrations/__pycache__/0005_auto_20200304_1050.cpython-36.pyc
+将删除 apps/courses/migrations/__pycache__/0006_course_notice.cpython-36.pyc
+将删除 apps/courses/migrations/__pycache__/0007_auto_20200304_1601.cpython-36.pyc
+将删除 apps/courses/migrations/__pycache__/0008_auto_20200305_1143.cpython-36.pyc
+将删除 apps/operations/__pycache__/forms.cpython-36.pyc
+将删除 apps/operations/__pycache__/urls.cpython-36.pyc
+将删除 apps/operations/__pycache__/views.cpython-36.pyc
+将删除 apps/organizations/migrations/__pycache__/0003_teacher_is_gold.cpython-36.pyc
+将删除 media/courses/2020/02/540e57300001d6d906000338-240-135.jpg
+将删除 media/courses/2020/02/mysql.jpg
+将删除 media/courses/2020/02/mysql_sYukX8w.jpg
+将删除 media/courses/resourse/
+将删除 media/head_image/
+将删除 media/teacher/2020/02/default_middile_7_j3ctNsv.png
+将删除 media/teacher/2020/02/default_middile_7_kNDxYju.png

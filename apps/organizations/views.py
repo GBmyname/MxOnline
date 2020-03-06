@@ -6,14 +6,40 @@ from django.http import JsonResponse
 from apps.organizations.models import City, CourseOrg, Teacher
 from apps.courses.models import Course
 from apps.organizations.forms import AddAskForm
+from apps.operations.models import UserFavorite
 
 
 class TeacherDetailView(View):
     def get(self, request, teacher_id, *args, **kwargs):
         teacher = Teacher.objects.get(id=teacher_id)
+        courses = Course.objects.filter(teacher=teacher)
+        classic_courses = courses.filter(is_classic=True)[:3]
+        teachers = Teacher.objects.all()
+        rank_teacher = teachers.order_by('-fav_nums')
 
-        render(request, 'teacher-detail.html', {
+        request.user.userfavotite_set.fav_id
+
+        teacher_fav = UserFavorite.objects.filter(user=request.user, fav_id=teacher.id, fav_type='3')
+        org_fav = UserFavorite.objects.filter(user=request.user, fav_id=teacher.org.id, fav_type='2')
+
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+
+        p = Paginator(courses, request=request, per_page=2)
+
+        # 需要特别注意，此时org_list已经不再是QuerySet,将数据库信息封装进了xx.object_list，所以在前端需要修改命名格式
+        courses = p.page(page)
+
+        return render(request, 'teacher-detail.html', {
             'teacher': teacher,
+            'courses': courses,
+            'classic_courses': classic_courses,
+            'rank_teacher': rank_teacher,
+            'teacher_fav': teacher_fav,
+            'org_fav':org_fav,
+
         })
 
 
@@ -48,9 +74,11 @@ class TeachersView(View):
     def get(self, request, org_id, *args, **kwargs):
         active = 'teachers'
         org = CourseOrg.objects.get(id=org_id)
+        org_has_fav=UserFavorite.objects.filter(user=request.user,fav_id=org.id,fav_type='2')
         return render(request, 'org-detail-teachers.html', {
             'org': org,
             'active': active,
+            'org_has_fav':org_has_fav
         })
 
 
@@ -58,9 +86,13 @@ class DescView(View):
     def get(self, request, org_id, *args, **kwargs):
         active = 'desc'
         org = CourseOrg.objects.get(id=org_id)
+        org_has_fav=UserFavorite.objects.filter(user=request.user,fav_id=org.id,fav_type='2')
+
         return render(request, 'org-detail-desc.html', {
             'org': org,
             'active': active,
+            'org_has_fav': org_has_fav
+
         })
 
 
@@ -69,6 +101,7 @@ class CoursesView(View):
         active = 'courses'
         courses = Course.objects.filter(course_org=org_id)
         org = CourseOrg.objects.get(id=org_id)
+        org_has_fav=UserFavorite.objects.filter(user=request.user,fav_id=org.id,fav_type='2')
 
         # 配置pure_pagination分页功能
         try:
@@ -85,6 +118,8 @@ class CoursesView(View):
             'courses': courses,
             'org': org,
             'active': active,
+            'org_has_fav': org_has_fav
+
         })
 
 
@@ -92,9 +127,11 @@ class HomePageView(View):
     def get(self, request, org_id, *args, **kwargs):
         active = 'homepage'
         org = CourseOrg.objects.get(id=org_id)
+        org_has_fav=UserFavorite.objects.filter(user=request.user,fav_id=org.id,fav_type='2')
         return render(request, 'org-detail-homepage.html', {
             'org': org,
             'active': active,
+            'org_has_fav':org_has_fav,
 
         })
 

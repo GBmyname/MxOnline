@@ -29,6 +29,7 @@ class UserProfile(AbstractUser):
         verbose_name = '用户信息'
         verbose_name_plural = verbose_name
 
+
     def __str__(self):
         if self.nick_name:
             return self.nick_name

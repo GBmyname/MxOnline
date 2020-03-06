@@ -77,7 +77,11 @@
                     </div>
                     <div class="btn fr collectionbtn  notlogin
                  " data-favid="22" data-fav-type="1">
-                        收藏
+                               {% if org_has_fav %}
+                                已收藏
+                            {% else %}
+                                收藏
+                            {% endif %}
                     </div>
 
                 </div>
