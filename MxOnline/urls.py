@@ -20,7 +20,6 @@ from django.views.static import serve
 
 from extra_apps import xadmin
 from apps.users.views import LoginView, LogoutView
-from apps.organizations.views import OrgListView
 from MxOnline.settings import MEDIA_ROOT
 
 urlpatterns = [
@@ -34,6 +33,8 @@ urlpatterns = [
     path('org/', include(('apps.organizations.urls', 'organizations'), namespace='org')),
     # 用户操作相关
     path('op/', include(('apps.operations.urls', 'operations'), namespace='op')),
+    # usercenter
+    path('usercenter/', include(('apps.users.urls', 'users'), namespace='usercenter')),
 
     # 课程相关
     path('courses/', include(('apps.courses.urls', 'courses'), namespace='courses')),
