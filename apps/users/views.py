@@ -4,30 +4,107 @@ from django.views.generic import View
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
+from pure_pagination import Paginator, PageNotAnInteger
 
-from apps.users.forms import LoginForm, UploadImageForm, UserInfoForm,UpdatePwdForm
+from apps.users.forms import LoginForm, UploadImageForm, UserInfoForm, UpdatePwdForm, DeletUserFavForm
+from apps.operations.models import UserCourse, UserFavorite, UserMessage
+from apps.organizations.models import Teacher, CourseOrg
+from apps.courses.models import Course
 
-class UpdatePwdView(View):
-    def post(self,request,*args,**kwargs):
-        update_pwd_form=UpdatePwdForm(request.POST)
-        if update_pwd_form.is_valid():
-            new_pwd=update_pwd_form.cleaned_data['password1']
-            user=request.user
-            user.set_password(new_pwd)
-            user.save()
-            login(request,user)
-            return JsonResponse({
-                'status':'success'
-            })
-        return JsonResponse({
-            'status':'fail',
-            'msg':update_pwd_form.errors
+
+class MessageView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request, *args, **kwargs):
+        user_message = UserMessage.objects.filter(user=request.user).order_by('-add_time')
+        for message in user_message:
+            message.has_read = True
+            message.save()
+
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+
+        p = Paginator(user_message, request=request, per_page=5)
+
+        # 需要特别注意，此时org_list已经不再是QuerySet,将数据库信息封装进了xx.object_list，所以在前端需要修改命名格式
+        user_message = p.page(page)
+
+        return render(request, 'usercenter-message.html', {
+            "user_message": user_message,
         })
 
 
+class FavOrgView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request, *args, **kwargs):
+        user_fav_set = UserFavorite.objects.filter(user=request.user, fav_type=2)
+        fav_course_id = [user_fav.fav_id for user_fav in user_fav_set]
+        fav_orgs = CourseOrg.objects.filter(id__in=fav_course_id)
+        return render(request, 'usercenter-fav-org.html', {
+            'fav_orgs': fav_orgs,
+            'active': 'orgs'
+        })
 
 
-class UploadImageView(View):
+class FavCoursesView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request, *args, **kwargs):
+        user_fav_set = UserFavorite.objects.filter(user=request.user, fav_type=1)
+        fav_course_id = [user_fav.fav_id for user_fav in user_fav_set]
+        fav_courses = Course.objects.filter(id__in=fav_course_id)
+        return render(request, 'usercenter-fav-course.html', {
+            'fav_courses': fav_courses,
+            'active': 'courses'
+        })
+
+
+class FavTeacherView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request, *args, **kwargs):
+        user_fav_set = UserFavorite.objects.filter(user=request.user, fav_type=3)
+        fav_teacher_id = [user_fav.fav_id for user_fav in user_fav_set]
+        fav_teacher = Teacher.objects.filter(id__in=fav_teacher_id)
+        return render(request, 'usercenter-fav-teacher.html', {
+            'fav_teacher': fav_teacher,
+            'active': 'teachers'
+        })
+
+
+class CoursesView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request, *args, **kwargs):
+        user_courses = UserCourse.objects.filter(user_id=request.user)
+        return render(request, 'usercenter-mycourse.html', {
+            'user_courses': user_courses,
+        })
+
+
+class UpdatePwdView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def post(self, request, *args, **kwargs):
+        update_pwd_form = UpdatePwdForm(request.POST)
+        if update_pwd_form.is_valid():
+            new_pwd = update_pwd_form.cleaned_data['password1']
+            user = request.user
+            user.set_password(new_pwd)
+            user.save()
+            login(request, user)
+            return JsonResponse({
+                'status': 'success'
+            })
+        return JsonResponse(update_pwd_form.errors)
+
+
+class UploadImageView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
     def post(self, request, *args, **kwargs):
         upload_image_form = UploadImageForm(request.POST, request.FILES, instance=request.user)
         if upload_image_form.is_valid():
@@ -58,6 +135,7 @@ class InfoView(LoginRequiredMixin, View):
                 'status': 'success'
             })
         return JsonResponse(user_info_form.errors)
+
 
 class LogoutView(View):
     def get(self, request, *args, **kwargs):

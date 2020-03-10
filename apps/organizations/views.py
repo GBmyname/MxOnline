@@ -17,7 +17,7 @@ class TeacherDetailView(View):
         teachers = Teacher.objects.all()
         rank_teacher = teachers.order_by('-fav_nums')
 
-        request.user.userfavotite_set.fav_id
+        # request.user.userfavorite_set.fav_id
 
         teacher_fav = UserFavorite.objects.filter(user=request.user, fav_id=teacher.id, fav_type='3')
         org_fav = UserFavorite.objects.filter(user=request.user, fav_id=teacher.org.id, fav_type='2')
